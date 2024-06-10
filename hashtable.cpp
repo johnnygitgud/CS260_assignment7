@@ -104,18 +104,6 @@ std::string exec(const char* cmd) {
 }
 
 // Function to retrieve DNS cache
-// std::unordered_map<std::string, std::string> retrieveDNSCache() {
-//     std::unordered_map<std::string, std::string> dnsCache;
-//     std::string output = exec("ipconfig /displaydns");
-//     std::regex rgx("Record Name\\s+\\.\\.\\.\\.\\.\\.\\.\\.\\.\\.\\.\\.\\s+(.+)\n.*?Record Type\\s+\\.\\.\\.\\.\\.\\.\\.\\.\\.\\.\\.\\.\\s+A\n.*?Record Data\\s+\\.\\.\\.\\.\\.\\.\\.\\.\\.\\.\\.\\.\\s+(.+)\n");
-//     std::smatch matches;
-//     std::string::const_iterator searchStart(output.cbegin());
-//     while (std::regex_search(searchStart, output.cend(), matches, rgx)) {
-//         dnsCache[matches[1].str()] = matches[2].str();
-//         searchStart = matches.suffix().first;
-//     }
-//     return dnsCache;
-// }
 
 std::unordered_map<std::string, std::string> retrieveDNSCache() {
     std::unordered_map<std::string, std::string> dnsCache;
@@ -132,10 +120,11 @@ std::unordered_map<std::string, std::string> retrieveDNSCache() {
         searchStart = matches.suffix().first;
     }
 
-    // Print the DNS cache
+    // Test Print the DNS cache to terminal
     std::cout << "DNS Cache:" << std::endl;
     for (const auto& pair : dnsCache) {
-        std::cout << "Record Name: " << pair.first << ", Record Data: " << pair.second << std::endl;
+        //Only comment or uncomment the line below to test print the DNS cache. At this point the DNS cache is not yet inserted into the hash map.
+        // std::cout << "Record Name: " << pair.first << ", Record Data: " << pair.second << std::endl;
     }
 
     return dnsCache;
@@ -159,19 +148,34 @@ void writeHashMapToFile(HashMap* mp, const std::string& fileName) {
     }
 }
 
+// Function to print the hash map
+void printHashMap(HashMap* mp) {
+    for (int i = 0; i < mp->capacity; ++i) {
+        Node* currNode = mp->arr[i];
+        while (currNode != nullptr) {
+            std::cout << "Key: " << currNode->key << ", Value: " << currNode->value << std::endl;
+            currNode = currNode->next;
+        }
+    }
+}
+
 int main() {
     HashMap* mp = (HashMap*)malloc(sizeof(HashMap));
     initializeHashMap(mp);
 
+    // Retrieve DNS cache and insert into the hash map
     auto dnsCache = retrieveDNSCache();
     for (const auto& entry : dnsCache) {
         insert(mp, entry.first, entry.second);
     }
-
+    // Print the hash map to terminal
+    printHashMap(mp);
     writeHashMapToFile(mp, "dns_cache.txt");
 
+    // Test search of a key in the hash map
     std::cout << "Search result for google.com: " << search(mp, "google.com") << std::endl;
 
+    // Test deletion of a key from the hash map
     deleteKey(mp, "google.com");
     std::cout << "Search result for google.com after deletion: " << search(mp, "google.com") << std::endl;
 
