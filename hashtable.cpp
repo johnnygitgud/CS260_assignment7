@@ -1,185 +1,155 @@
 #include <iostream>
 #include <string>
-#include <unordered_map>
-#include <fstream>
-#include <cstdlib>
-#include <cstdio>
+#include <vector>
+#include <list>
 #include <regex>
+#include <fstream>
+#include <filesystem>
 #include <array>
+#include <memory>
+#include <cstdio>
+#include <cstdlib>
+#include <stdexcept>
 
-// Node structure
-struct Node {
-    std::string key; // domain name
-    std::string value; // IP address
-    Node* next;
+const int TABLE_SIZE = 100; // Size of the hash table
+
+// Structure to store each hash table entry
+struct HashEntry {
+    std::string key;
+    std::string value;
 };
 
-// Initialize the node
-void setNode(Node* node, const std::string& key, const std::string& value) {
-    node->key = key;
-    node->value = value;
-    node->next = nullptr;
-}
+// Simple hash table class with chaining for collision resolution
+class SimpleHashTable {
+private:
+    std::vector<std::list<HashEntry>> table; // Vector of lists to handle collisions with chaining
 
-// Hash Map structure
-struct HashMap {
-    int numOfElements, capacity;
-    Node** arr;
-};
-
-// Initialize the hash map
-void initializeHashMap(HashMap* mp, int capacity = 100) {
-    mp->capacity = capacity;
-    mp->numOfElements = 0;
-    mp->arr = (Node**)malloc(sizeof(Node*) * mp->capacity);
-    for (int i = 0; i < mp->capacity; ++i) {
-        mp->arr[i] = nullptr;
+public:
+    SimpleHashTable() {
+        table.resize(TABLE_SIZE); // Initialize the table with empty lists
     }
-}
 
-// Simple hash function for strings
-int hashFunction(HashMap* mp, const std::string& key) {
-    int hash = 0;
-    int prime = 31;
-    for (char c : key) {
-        hash = (hash * prime + c) % mp->capacity;
+    // Hash function to compute index for a given key
+    int hashFunction(const std::string& key) {
+        int hash = 0;
+        int prime = 31;
+        for (char c : key) {
+            hash = (hash * prime + c) % TABLE_SIZE;
+        }
+        return hash;
     }
-    return hash;
-}
 
-// Insert key-value pair into the hash map
-void insert(HashMap* mp, const std::string& key, const std::string& value) {
-    int bucketIndex = hashFunction(mp, key);
-    Node* newNode = (Node*)malloc(sizeof(Node));
-    setNode(newNode, key, value);
-    newNode->next = mp->arr[bucketIndex];
-    mp->arr[bucketIndex] = newNode;
-    mp->numOfElements++;
-}
+    // Insert function to add key-value pairs to the hash table
+    void insert(const std::string& key, const std::string& value) {
+        int index = hashFunction(key); // Compute the index for the key
+        table[index].push_back({key, value}); // Add the key-value pair to the list at the computed index
+    }
 
-// Delete key from the hash map
-void deleteKey(HashMap* mp, const std::string& key) {
-    int bucketIndex = hashFunction(mp, key);
-    Node* currNode = mp->arr[bucketIndex];
-    Node* prevNode = nullptr;
-    while (currNode != nullptr) {
-        if (currNode->key == key) {
-            if (prevNode == nullptr) {
-                mp->arr[bucketIndex] = currNode->next;
-            } else {
-                prevNode->next = currNode->next;
+    // Contains function to check if a key is present in the hash table
+    bool contains(const std::string& key) {
+        int index = hashFunction(key); // Compute the index for the key
+        for (auto& entry : table[index]) { // Iterate over the list at the computed index
+            if (entry.key == key) {
+                return true;
             }
-            free(currNode);
-            mp->numOfElements--;
-            return;
         }
-        prevNode = currNode;
-        currNode = currNode->next;
+        return false;
     }
-}
 
-// Search for a key in the hash map
-std::string search(HashMap* mp, const std::string& key) {
-    int bucketIndex = hashFunction(mp, key);
-    Node* currNode = mp->arr[bucketIndex];
-    while (currNode != nullptr) {
-        if (currNode->key == key) {
-            return currNode->value;
+    // Get function to retrieve the value associated with a key
+    std::string get(const std::string& key) {
+        int index = hashFunction(key); // Compute the index for the key
+        for (auto& entry : table[index]) { // Iterate over the list at the computed index
+            if (entry.key == key) {
+                return entry.value;
+            }
         }
-        currNode = currNode->next;
+        return "Key not found";
     }
-    return "Oops! No data found.\n";
-}
 
-// Function to execute a system command and return the output
-std::string exec(const char* cmd) {
-    std::array<char, 128> buffer;
-    std::string result;
-    std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
-    if (!pipe) throw std::runtime_error("popen() failed!");
-    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
-        result += buffer.data();
+    // Print function to display the contents of the hash table
+    void printHashTable() const {
+        std::cout << "\nPrinting the entire hash table:\n";
+        for (int i = 0; i < TABLE_SIZE; i++) {
+            for (auto& entry : table[i]) { // Iterate over each list in the table
+                if (!entry.key.empty()) {
+                    std::cout << "Index: " << i << ", Key: " << entry.key << ", Value: " << entry.value << std::endl;
+                }
+            }
+        }
     }
-    return result;
-}
+};
 
-// Function to retrieve DNS cache
+// Class to retrieve DNS cache and write it to a file
+class DNSCache {
+public:
+    void retrieveAndWriteToFile(const std::string& fileName) {
+        std::string output = exec("ipconfig /displaydns"); // Execute the command to retrieve DNS cache
+        std::cout << output << std::endl; // Print the output to the terminal
+        writeToFile(fileName, output); // Write the output to a file
+    }
 
-std::unordered_map<std::string, std::string> retrieveDNSCache() {
-    std::unordered_map<std::string, std::string> dnsCache;
-    std::string output = exec("ipconfig /displaydns");
+private:
+    // Function to execute a system command and return the output
+    std::string exec(const char* cmd) {
+        std::array<char, 128> buffer;
+        std::string result;
+        std::shared_ptr<FILE> pipe(_popen(cmd, "r"), _pclose);
+        if (!pipe) throw std::runtime_error("_popen() failed!");
+        while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+            result += buffer.data();
+        }
+        return result;
+    }
 
-    // Print the output for debugging
-    std::cout << "Output: " << output << std::endl;
+    // Function to write data to a file
+    void writeToFile(const std::string& fileName, const std::string& data) {
+        std::filesystem::path filePath = std::filesystem::current_path() / fileName; // Get the current path and append the file name
+        std::ofstream outFile(filePath);
+        if (outFile.is_open()) {
+            outFile << data; // Write data to the file
+            outFile.close();
+            std::cout << "Data written to file: " << filePath << std::endl;
+        } else {
+            std::cerr << "Unable to open file for writing: " << filePath << std::endl;
+        }
+    }
+};
 
-    std::regex rgx("Record Name\\s+\\.\\.\\.\\.\\.\\.\\.\\.\\.\\.\\.\\.\\s+(.+)\n.*?Record Type\\s+\\.\\.\\.\\.\\.\\.\\.\\.\\.\\.\\.\\.\\s+A\n.*?Record Data\\s+\\.\\.\\.\\.\\.\\.\\.\\.\\.\\.\\.\\.\\s+(.+)\n");
+// Function to populate the hash table from the data in the file
+void populateHashTable(SimpleHashTable& hashTable, const std::string& fileName) {
+    std::ifstream inFile(fileName);
+    if (!inFile.is_open()) {
+        std::cerr << "Unable to open file for reading: " << fileName << std::endl;
+        return;
+    }
+
+    // Read the entire file content
+    std::string content((std::istreambuf_iterator<char>(inFile)), std::istreambuf_iterator<char>());
+    inFile.close();
+
+    // Regular expression to match DNS records
+    std::regex rgx(R"(Record Name\s+\.\.\.\s+(.+)\n.*?Record Type\s+\.\.\.\s+A\n.*?Record Data\s+\.\.\.\s+(.+))");
     std::smatch matches;
-    std::string::const_iterator searchStart(output.cbegin());
-    while (std::regex_search(searchStart, output.cend(), matches, rgx)) {
-        dnsCache[matches[1].str()] = matches[2].str();
-        searchStart = matches.suffix().first;
-    }
 
-    // Test Print the DNS cache to terminal
-    std::cout << "DNS Cache:" << std::endl;
-    for (const auto& pair : dnsCache) {
-        //Only comment or uncomment the line below to test print the DNS cache. At this point the DNS cache is not yet inserted into the hash map.
-        // std::cout << "Record Name: " << pair.first << ", Record Data: " << pair.second << std::endl;
-    }
-
-    return dnsCache;
-}
-
-
-// Write hash map to a file
-void writeHashMapToFile(HashMap* mp, const std::string& fileName) {
-    std::ofstream outFile(fileName);
-    if (outFile.is_open()) {
-        for (int i = 0; i < mp->capacity; ++i) {
-            Node* currNode = mp->arr[i];
-            while (currNode != nullptr) {
-                outFile << currNode->key << " " << currNode->value << "\n";
-                currNode = currNode->next;
-            }
-        }
-        outFile.close();
-    } else {
-        std::cerr << "Unable to open file for writing: " << fileName << std::endl;
-    }
-}
-
-// Function to print the hash map
-void printHashMap(HashMap* mp) {
-    for (int i = 0; i < mp->capacity; ++i) {
-        Node* currNode = mp->arr[i];
-        while (currNode != nullptr) {
-            std::cout << "Key: " << currNode->key << ", Value: " << currNode->value << std::endl;
-            currNode = currNode->next;
-        }
+    // Iterate over the file content to find all matches
+    std::string::const_iterator searchStart(content.cbegin());
+    while (std::regex_search(searchStart, content.cend(), matches, rgx)) {
+        std::string key = matches[1].str(); // Extract key (record name)
+        std::string value = matches[2].str(); // Extract value (record data)
+        hashTable.insert(key, value); // Insert key-value pair into the hash table
+        searchStart = matches.suffix().first; // Move the search start to the next position
     }
 }
 
 int main() {
-    HashMap* mp = (HashMap*)malloc(sizeof(HashMap));
-    initializeHashMap(mp);
+    DNSCache dnsCache;
+    dnsCache.retrieveAndWriteToFile("dns_cache.csv"); // Retrieve DNS cache and write to file
 
-    // Retrieve DNS cache and insert into the hash map
-    auto dnsCache = retrieveDNSCache();
-    for (const auto& entry : dnsCache) {
-        insert(mp, entry.first, entry.second);
-    }
-    // Print the hash map to terminal
-    printHashMap(mp);
-    writeHashMapToFile(mp, "dns_cache.txt");
+    SimpleHashTable simpleHashTable;
+    populateHashTable(simpleHashTable, "dns_cache.csv"); // Populate the hash table from the file
 
-    // Test search of a key in the hash map
-    std::cout << "Search result for google.com: " << search(mp, "google.com") << std::endl;
+    simpleHashTable.printHashTable(); // Print the hash table
 
-    // Test deletion of a key from the hash map
-    deleteKey(mp, "google.com");
-    std::cout << "Search result for google.com after deletion: " << search(mp, "google.com") << std::endl;
-
-    free(mp->arr);
-    free(mp);
     return 0;
 }

@@ -1,0 +1,171 @@
+
+Windows IP Configuration
+
+    copilot-telemetry-service.githubusercontent.com
+    ----------------------------------------
+    Record Name . . . . . : copilot-telemetry-service.githubusercontent.com
+    Record Type . . . . . : 5
+    Time To Live  . . . . : 34
+    Data Length . . . . . : 8
+    Section . . . . . . . : Answer
+    CNAME Record  . . . . : glb-db52c2cf8be544.github.com
+
+
+    Record Name . . . . . : glb-db52c2cf8be544.github.com
+    Record Type . . . . . : 1
+    Time To Live  . . . . : 34
+    Data Length . . . . . : 4
+    Section . . . . . . . : Answer
+    A (Host) Record . . . : 140.82.114.21
+
+
+    enrichment.osi.office.net
+    ----------------------------------------
+    Record Name . . . . . : enrichment.osi.office.net
+    Record Type . . . . . : 5
+    Time To Live  . . . . : 59
+    Data Length . . . . . : 8
+    Section . . . . . . . : Answer
+    CNAME Record  . . . . : prod.officeenrichment.osi.office.net.akadns.net
+
+
+    Record Name . . . . . : prod.officeenrichment.osi.office.net.akadns.net
+    Record Type . . . . . : 1
+    Time To Live  . . . . : 59
+    Data Length . . . . . : 4
+    Section . . . . . . . : Answer
+    A (Host) Record . . . : 52.109.0.126
+
+
+    us.version.battle.net
+    ----------------------------------------
+    Record Name . . . . . : us.version.battle.net
+    Record Type . . . . . : 1
+    Time To Live  . . . . : 49584
+    Data Length . . . . . : 4
+    Section . . . . . . . : Answer
+    A (Host) Record . . . : 137.221.106.22
+
+
+    ipv4only.arpa
+    ----------------------------------------
+    Record Name . . . . . : ipv4only.arpa
+    Record Type . . . . . : 1
+    Time To Live  . . . . : 45548
+    Data Length . . . . . : 4
+    Section . . . . . . . : Answer
+    A (Host) Record . . . : 192.0.0.171
+
+
+    Record Name . . . . . : ipv4only.arpa
+    Record Type . . . . . : 1
+    Time To Live  . . . . : 45548
+    Data Length . . . . . : 4
+    Section . . . . . . . : Answer
+    A (Host) Record . . . : 192.0.0.170
+
+
+    copilot-telemetry.githubusercontent.com
+    ----------------------------------------
+    Record Name . . . . . : copilot-telemetry.githubusercontent.com
+    Record Type . . . . . : 5
+    Time To Live  . . . . : 34
+    Data Length . . . . . : 8
+    Section . . . . . . . : Answer
+    CNAME Record  . . . . : copilot-telemetry-service.githubusercontent.com
+
+
+    Record Name . . . . . : copilot-telemetry-service.githubusercontent.com
+    Record Type . . . . . : 5
+    Time To Live  . . . . : 34
+    Data Length . . . . . : 8
+    Section . . . . . . . : Answer
+    CNAME Record  . . . . : glb-db52c2cf8be544.github.com
+
+
+    Record Name . . . . . : glb-db52c2cf8be544.github.com
+    Record Type . . . . . : 1
+    Time To Live  . . . . : 34
+    Data Length . . . . . : 4
+    Section . . . . . . . : Answer
+    A (Host) Record . . . : 140.82.113.21
+
+
+    mobile.events.data.microsoft.com
+    ----------------------------------------
+    Record Name . . . . . : mobile.events.data.microsoft.com
+    Record Type . . . . . : 5
+    Time To Live  . . . . : 5
+    Data Length . . . . . : 8
+    Section . . . . . . . : Answer
+    CNAME Record  . . . . : mobile.events.data.trafficmanager.net
+
+
+    Record Name . . . . . : mobile.events.data.trafficmanager.net
+    Record Type . . . . . : 5
+    Time To Live  . . . . : 5
+    Data Length . . . . . : 8
+    Section . . . . . . . : Answer
+    CNAME Record  . . . . : onedscolprdweu14.westeurope.cloudapp.azure.com
+
+
+    Record Name . . . . . : onedscolprdweu14.westeurope.cloudapp.azure.com
+    Record Type . . . . . : 1
+    Time To Live  . . . . : 5
+    Data Length . . . . . : 4
+    Section . . . . . . . : Answer
+    A (Host) Record . . . : 52.178.17.235
+
+
+    mozilla.cloudflare-dns.com
+    ----------------------------------------
+    Record Name . . . . . : mozilla.cloudflare-dns.com
+    Record Type . . . . . : 1
+    Time To Live  . . . . : 42
+    Data Length . . . . . : 4
+    Section . . . . . . . : Answer
+    A (Host) Record . . . : 162.159.61.4
+
+
+    Record Name . . . . . : mozilla.cloudflare-dns.com
+    Record Type . . . . . : 1
+    Time To Live  . . . . : 42
+    Data Length . . . . . : 4
+    Section . . . . . . . : Answer
+    A (Host) Record . . . : 172.64.41.4
+
+
+    ocsp.digicert.com
+    ----------------------------------------
+    Record Name . . . . . : ocsp.digicert.com
+    Record Type . . . . . : 5
+    Time To Live  . . . . : 695
+    Data Length . . . . . : 8
+    Section . . . . . . . : Answer
+    CNAME Record  . . . . : ocsp.edge.digicert.com
+
+
+    Record Name . . . . . : ocsp.edge.digicert.com
+    Record Type . . . . . : 5
+    Time To Live  . . . . : 695
+    Data Length . . . . . : 8
+    Section . . . . . . . : Answer
+    CNAME Record  . . . . : fp2e7a.wpc.2be4.phicdn.net
+
+
+    Record Name . . . . . : fp2e7a.wpc.2be4.phicdn.net
+    Record Type . . . . . : 5
+    Time To Live  . . . . : 695
+    Data Length . . . . . : 8
+    Section . . . . . . . : Answer
+    CNAME Record  . . . . : fp2e7a.wpc.phicdn.net
+
+
+    Record Name . . . . . : fp2e7a.wpc.phicdn.net
+    Record Type . . . . . : 1
+    Time To Live  . . . . : 695
+    Data Length . . . . . : 4
+    Section . . . . . . . : Answer
+    A (Host) Record . . . : 192.229.211.108
+
+
